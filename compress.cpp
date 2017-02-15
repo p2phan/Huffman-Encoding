@@ -10,7 +10,8 @@
  */
 
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[])
+{
     
 
     if(argc != 3){
@@ -35,13 +36,18 @@ int main(int argc, char* argv[]){
         freq.at(count)++;
     }
     
+    ofstream compress;
+    compress.open(argv[2]);   
+    for(int i = 0; i < freq.size(); i++)
+    {
+        compress << freq[i] << endl;
+    }
+
     HCTree ht;
     ht.build(freq);
     original.clear();
     original.seekg(0, ios::beg);
 
-    ofstream compress;
-    compress.open(argv[2]);   
     while(1)
     {
         byte symbol = original.get();

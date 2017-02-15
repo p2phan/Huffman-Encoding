@@ -94,7 +94,8 @@ void HCTree::encode(byte symbol, ofstream& out) const
 int HCTree::decode(ifstream& in) const
 {
     HCNode* curr = root;
-   
+    if(in.eof()){return 0;}
+     
     while(curr->c0 || curr->c1)
     {
         int read = in.get();
