@@ -53,6 +53,7 @@ int main(int argc, char* argv[])
         byte symbol = original.get();
         if(original.eof()){ break;}
         ht.encode(symbol, compress);
+        //cout << "putting c in" << endl;
     }
    
     original.close(); 

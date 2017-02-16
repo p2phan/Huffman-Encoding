@@ -26,8 +26,11 @@ int main(int argc, char* argv[])
     }
 
     vector<int> freq(256, 0);
+    int count = 0; 
     for(int i = 0; i < freq.size(); i++)
     {
+        string getFreq = "";
+        getline(compress, getFreq);
         if(compress.eof())
         {
             cout << "Incorrect format" << endl;
@@ -35,10 +38,11 @@ int main(int argc, char* argv[])
         }
         else
         {
-            string getFreq = "";
-            getline(compress, getFreq);
-            byte frequency = stoi(getFreq);
+           int frequency = stoi(getFreq);
+           // cout << frequency << endl;
             freq[i] = frequency;
+          //  cout << frequency << endl;
+            count += frequency;
         }
     }
 
@@ -48,13 +52,16 @@ int main(int argc, char* argv[])
     ofstream original;
     original.open(argv[2]);
 
-    while(1)
+    for( ; 0 < count ; count--)
     {
          unsigned char symbol = ht.decode(compress);
+         //cout << compress.eof() << " for " << count++ <<endl;
          if(compress.eof()){ break;}
          original << symbol;
 
     }
+    compress.close();
+    original.close();
 
 }
 

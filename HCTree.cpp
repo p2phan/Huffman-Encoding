@@ -34,7 +34,8 @@ void HCTree::build(const vector<int>& freqs)
         huff.pop();
          
         cout << "linking nodes w/ freq " << n0->count << " and " << n1->count <<  " with 2nd symbol " << n1->symbol <<endl;
-        HCNode* top = new HCNode(n0->count + n1->count, 0, 0, 0, 0);
+        HCNode* top = new HCNode(n0->count + n1->count, 
+                      n0->symbol, 0, 0, 0);
         top->c0 = n0;
         top->c1 = n1;
 
@@ -55,10 +56,15 @@ void HCTree::build(const vector<int>& freqs)
 
 void HCTree::encode(byte symbol, ofstream& out) const
 {
-    std::cout << symbol <<std::endl;
-    std::cout << leaves.at(symbol)->p->symbol <<std::endl;
+    //std::cout << symbol <<std::endl;
+    //std::cout << leaves.at(symbol)->p->symbol <<std::endl;
     HCNode* curr = leaves.at(symbol);
-    
+ 
+    if(!curr)
+    { 
+        cout << symbol << " is not inserted into the tree" << endl;
+        return;}
+       
     int count = 0;
     int code = 0; 
     
@@ -74,8 +80,15 @@ void HCTree::encode(byte symbol, ofstream& out) const
         curr = curr->p;
     }
     
-    cout << count << " is count and " << code << " is the ht"<<endl;
+    //cout << count << " is count and " << code << " is the ht"<<endl;
     
+    //case for when tree has only one node
+    if(count == 0)
+    {
+        out << '0';
+    }
+
+ 
     for(int i = count-1; 0 <= i; i--)
     {
         // out << ((code >> i) & 1);
@@ -94,12 +107,20 @@ void HCTree::encode(byte symbol, ofstream& out) const
 int HCTree::decode(ifstream& in) const
 {
     HCNode* curr = root;
-    if(in.eof()){return 0;}
+
+    if(!curr){ return 0;}
+
+   /* if(!curr->p && !curr->c0 && !curr->c1)
+    {
+        return (int)curr->symbol;       
+    }*/
+    
      
     while(curr->c0 || curr->c1)
     {
         int read = in.get();
         //somehow write left to right
+        if(in.eof()){return 0;}
         if(read == '0'){
             curr = curr->c0;
         }
