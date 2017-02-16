@@ -16,10 +16,14 @@
  */
 bool HCNode::operator<(const HCNode& other)
 {
+    //return the opposite because we want the lowest freq 
+    //to be at the top
     if(count != other.count) 
     { 
         return count < other.count;
     }
     
+    //when freq are the same, the symbol with larger ASCII value
+    //will have priority
     return symbol < other.symbol;
 }  

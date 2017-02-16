@@ -9,16 +9,24 @@
  * leading to each character
  */
 
-
-//do we need to check size?
-//of freqs
+/**
+ * Creates a huffman tree based on the freq of each unsigned char
+ *
+ * Parameters:
+ *            freqs: vector containing the freq at the index of
+ *            a character's ASCII value
+ */
 void HCTree::build(const vector<int>& freqs)
 { 
+    //creates prioity queue whose comparison makes it s.t the high
+    //comparison get most prioirty
     priority_queue<HCNode*, vector<HCNode*>, HCNodePtrComp> huff;
-    //loop that will make a node and push them into priority queue
+
+    //loop that will make a node containing freq
+    //and push them into priority queue
     for(int i = 0; i < freqs.size(); i++)
     {
-    
+        //we don't care about char w/ 0 freq
         if(0 < freqs.at(i)){
             HCNode* node = new HCNode(freqs.at(i), i, 0, 0, 0);
             huff.push(node);       
@@ -28,23 +36,26 @@ void HCTree::build(const vector<int>& freqs)
 
     //constructing tree
     while(!huff.empty() && huff.size() != 1){
+        //gets top 2 nodes and creates another one that combines freq
         HCNode* n0 = huff.top();
         huff.pop();
         HCNode* n1 = huff.top();
         huff.pop();
          
-        //cout << "linking nodes w/ freq " << n0->count << " and " << n1->count <<  " with 2nd symbol " << n1->symbol <<endl;
         HCNode* top = new HCNode(n0->count + n1->count, 
                       n0->symbol, 0, 0, 0);
+        //updating pointer
         top->c0 = n0;
         top->c1 = n1;
 
         n0->p = top;
         n1->p = top;
-
+    
+        //push back new node to compare with the rest
         huff.push(top);
     }
     
+    //condition where huffman tree only has one node   
     if(huff.size() == 1){
         root = huff.top();
         huff.pop();
@@ -52,14 +63,23 @@ void HCTree::build(const vector<int>& freqs)
 
 } 
 
+/**
+ * Encodes a byte and writes it out to file
+ *
+ * Parameters:
+ *            symbol: the byte to encode using 
+ *            huffman tree
+ *
+ *            out: the ofstream to write the result 
+ *            of the encoded symbol
+ */
 
 
 void HCTree::encode(byte symbol, ofstream& out) const
 {
-    //std::cout << symbol <<std::endl;
-    //std::cout << leaves.at(symbol)->p->symbol <<std::endl;
     HCNode* curr = leaves.at(symbol);
  
+    //null check
     if(!curr)
     { 
         cout << symbol << " is not inserted into the tree" << endl;
@@ -68,7 +88,8 @@ void HCTree::encode(byte symbol, ofstream& out) const
     int count = 0;
     int code = 0; 
     
-    //every 
+    //traverses up the tree and at every step it will put
+    //the bit according to the edge with to the correct place
     while(curr->p)
     {
         if(curr->p->c1 == curr)
@@ -80,7 +101,6 @@ void HCTree::encode(byte symbol, ofstream& out) const
         curr = curr->p;
     }
     
-    //cout << count << " is count and " << code << " is the ht"<<endl;
     
     //case for when tree has only one node
     if(count == 0)
@@ -89,9 +109,9 @@ void HCTree::encode(byte symbol, ofstream& out) const
     }
 
  
+    //writes out the bits from left to write to the stream
     for(int i = count-1; 0 <= i; i--)
     {
-        // out << ((code >> i) & 1);
         int bit = (code >> i) & 1;
         
         if(bit == 1){
@@ -104,24 +124,28 @@ void HCTree::encode(byte symbol, ofstream& out) const
 
 }
 
+/**
+ * Decodes from the stream and returns the result
+ *
+ * Parameter:
+ *           in: the ifstream to read from and decode
+ */
 int HCTree::decode(ifstream& in) const
 {
     HCNode* curr = root;
 
+    //null check
     if(!curr){ return 0;}
 
-   /* if(!curr->p && !curr->c0 && !curr->c1)
-    {
-        return (int)curr->symbol;       
-    }*/
-    
-     
+    //traverse through the huffman tree until it reaches a dead end
     while(curr->c0 || curr->c1)
     {
         int read = in.get();
-        //somehow write left to right
+
+        //stops the decoding if the reach end of file early
         if(in.eof()){return 0;}
-        cout << (char)read;
+
+        //moves the through the node's children
         if(read == '0'){
             curr = curr->c0;
         }
@@ -129,7 +153,8 @@ int HCTree::decode(ifstream& in) const
             curr = curr->c1;
         }
     }
-    cout << " is the code for " << curr->symbol << endl;
+    
+    //we return the symbol at the node which will be the decoded byte
     return (int)curr->symbol;   
 
 }
@@ -140,7 +165,8 @@ void HCTree::deleteAll(HCNode* n)
 {
     if(!n)
         return;
-
+    
+    //recursive post-order traversal
     deleteAll(n->c0);
     deleteAll(n->c1);
 
