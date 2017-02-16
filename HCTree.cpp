@@ -1,5 +1,5 @@
 #include "HCTree.h"
-//#include "HCNode.h"
+#include "HCNode.h"
 #include <queue>
 /**
  * Filename: HCTree.cpp
@@ -14,7 +14,7 @@
 //of freqs
 void HCTree::build(const vector<int>& freqs)
 { 
-    priority_queue<HCNode*> huff;
+    priority_queue<HCNode*, vector<HCNode*>, HCNodePtrComp> huff;
     //loop that will make a node and push them into priority queue
     for(int i = 0; i < freqs.size(); i++)
     {
@@ -33,7 +33,7 @@ void HCTree::build(const vector<int>& freqs)
         HCNode* n1 = huff.top();
         huff.pop();
          
-        cout << "linking nodes w/ freq " << n0->count << " and " << n1->count <<  " with 2nd symbol " << n1->symbol <<endl;
+        //cout << "linking nodes w/ freq " << n0->count << " and " << n1->count <<  " with 2nd symbol " << n1->symbol <<endl;
         HCNode* top = new HCNode(n0->count + n1->count, 
                       n0->symbol, 0, 0, 0);
         top->c0 = n0;
@@ -121,6 +121,7 @@ int HCTree::decode(ifstream& in) const
         int read = in.get();
         //somehow write left to right
         if(in.eof()){return 0;}
+        cout << (char)read;
         if(read == '0'){
             curr = curr->c0;
         }
@@ -128,7 +129,7 @@ int HCTree::decode(ifstream& in) const
             curr = curr->c1;
         }
     }
-    
+    cout << " is the code for " << curr->symbol << endl;
     return (int)curr->symbol;   
 
 }
