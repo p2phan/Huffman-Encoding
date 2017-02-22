@@ -91,6 +91,7 @@ int main(int argc, char* argv[])
             count += bit << (7-i);
         }
 
+        cout << "read " << count << " from file" <<endl; 
         //count = original.get();
 
         if(original.eof()){break;}
