@@ -9,6 +9,13 @@
  * leading to each character
  */
 
+/** Returns number of Distinct bits in a file
+ */
+int HCTree::getDistinctC()
+{
+    return distinctC;
+}
+
 /**
  * Creates a huffman tree based on the freq of each unsigned char
  *
@@ -31,6 +38,7 @@ void HCTree::build(const vector<int>& freqs)
             HCNode* node = new HCNode(freqs.at(i), i, 0, 0, 0);
             huff.push(node);       
             leaves.at(i) = node;
+            distinctC++;
         }   
     }
 
@@ -63,6 +71,38 @@ void HCTree::build(const vector<int>& freqs)
 
 } 
 
+void HCTree::encode(byte symbol, BitOutputStream& out) const
+{
+    HCNode* curr = leaves.at(symbol);
+
+    if(!curr) { return;}
+
+    //repetitive?
+    if(!curr->p && !curr->c0 && !curr->c1)
+    {
+         out.writeBit(0);
+    }
+
+    while(curr->p)
+    {
+        if(curr->p->c1 == curr)
+        {
+            out.writeBit(1);
+        }
+        
+        else
+        {
+            out.writeBit(0);
+        }
+        
+        curr = curr->p;
+
+    }
+
+
+} 
+
+
 /**
  * Encodes a byte and writes it out to file
  *
@@ -73,8 +113,6 @@ void HCTree::build(const vector<int>& freqs)
  *            out: the ofstream to write the result 
  *            of the encoded symbol
  */
-
-
 void HCTree::encode(byte symbol, ofstream& out) const
 {
     HCNode* curr = leaves.at(symbol);
@@ -82,7 +120,7 @@ void HCTree::encode(byte symbol, ofstream& out) const
     //null check
     if(!curr)
     { 
-        cout << symbol << " is not inserted into the tree" << endl;
+        cout << symbol << " was not inserted into the tree" << endl;
         return;}
        
     int count = 0;
@@ -123,6 +161,36 @@ void HCTree::encode(byte symbol, ofstream& out) const
     }
 
 }
+
+
+int HCTree::decode(BitInputStream& in) const
+{
+
+    HCNode* curr = root;
+    
+    if(!curr){return 0;}
+
+    while(curr->c0 || curr->c1)
+    {
+        int bit = in.readBit();
+        
+        if(bit == 1)
+        {
+            cout << "1" << endl;
+            curr = curr->c1;
+        }
+
+        else
+        {
+            cout << "0" << endl; 
+            curr =  curr->c0;
+        }
+    }
+    
+    return (int)curr->symbol;
+
+}
+
 
 /**
  * Decodes from the stream and returns the result

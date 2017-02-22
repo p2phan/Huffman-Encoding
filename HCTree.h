@@ -30,6 +30,7 @@ class HCTree {
 private:
     HCNode* root;
     vector<HCNode*> leaves;
+    int distinctC; //keeps track of distinct characters in a file    
 
     /**
      * helper function to destructor deleteing nodes
@@ -38,11 +39,17 @@ private:
 
 public:
     // explicit keyword is used to avoid accidental implicit conversions
-    explicit HCTree() : root(0) {
+    explicit HCTree() : root(0), distinctC(0) {
         leaves = vector<HCNode*>(256, (HCNode*) 0);
     }
 
     ~HCTree();
+
+    /**
+     * Returns number of distinct chars in a file
+     *
+     */ 
+    int getDistinctC();
 
     /** Use the Huffman algorithm to build a Huffman coding trie.
      *  PRECONDITION: freqs is a vector of ints, such that freqs[i] is 
@@ -57,7 +64,7 @@ public:
      *  PRECONDITION: build() has been called, to create the coding
      *  tree, and initialize root pointer and leaves vector.
      */
-//    void encode(byte symbol, BitOutputStream& out) const;
+    void encode(byte symbol, BitOutputStream& out) const;
 
     /** Write to the given ofstream
      *  the sequence of bits (as ASCII) coding the given symbol.
@@ -73,7 +80,7 @@ public:
      *  PRECONDITION: build() has been called, to create the coding
      *  tree, and initialize root pointer and leaves vector.
      */
-  //  int decode(BitInputStream& in) const;
+    int decode(BitInputStream& in) const;
 
     /** Return the symbol coded in the next sequence of bits (represented as 
      *  ASCII text) from the ifstream.

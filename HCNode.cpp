@@ -20,7 +20,7 @@ bool HCNode::operator<(const HCNode& other)
     //to be at the top
     if(count != other.count) 
     { 
-        return count < other.count;
+        return other.count < count;
     }
     
     //when freq are the same, the symbol with larger ASCII value
