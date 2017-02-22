@@ -4,6 +4,7 @@
 # Except for these:
 !.gitignore
 !Makefile
+!refactoredCode
 !refcompress
 !refuncompress
 !*.h
