@@ -83,23 +83,33 @@ void HCTree::encode(byte symbol, BitOutputStream& out) const
          out.writeBit(0);
     }
 
+
+    int count = 0;
+    int code = 0;
     while(curr->p)
     {
         if(curr->p->c1 == curr)
         {
-            out.writeBit(1);
+            code |= 1 << count;
         }
-        
-        else
-        {
-            out.writeBit(0);
-        }
-        
-        curr = curr->p;
 
+        count++;
+        curr = curr->p;
     }
 
+    for(int i = count-1; 0 <= i; i--)
+    {
+        int bit = (code >> i) & 1;
 
+        if(bit == 1){
+            out.writeBit(1);
+        }
+        else{
+            out.writeBit(0);
+        }
+    }
+
+    
 } 
 
 
@@ -176,17 +186,16 @@ int HCTree::decode(BitInputStream& in) const
         
         if(bit == 1)
         {
-            cout << "1" << endl;
+         //   cout << "1" << endl;
             curr = curr->c1;
         }
 
         else
         {
-            cout << "0" << endl; 
+           // cout << "0" << endl; 
             curr =  curr->c0;
         }
     }
-    
     return (int)curr->symbol;
 
 }

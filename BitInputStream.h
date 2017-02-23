@@ -6,21 +6,26 @@
 
 
 /**
- * 
+ * Class that allows user to read from a file one bit at a time 
  *
  */
 
 class BitInputStream{
 private:
-    char buff;
-    int nbits;
-    std::istream& in; 
+    char buff; //buffer hodling current byte
+    int nbits; //keeps track of which bits are read
+    std::istream& in; //iostream used to read from file
 
 public:
+    //constructor such that implementation wraps arund ifstream
     BitInputStream(std::ifstream& is ) : in(is), buff(0), nbits(0) {}
 
+    /** Method to extract next byte from stream
+     */ 
     void fill();
     
+    /** Reads from buffer left to right
+     */ 
     int readBit();
 };
 

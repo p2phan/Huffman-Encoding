@@ -1,6 +1,7 @@
 #include "HCTree.h"
 #include<iostream>
 #include<fstream>
+#include<bitset>
 
 /**
  * Filename uncompress.cpp
@@ -67,40 +68,51 @@ int main(int argc, char* argv[])
     */
     
 
-    compress.get();
+   compress.get();
+    //<< endl;
   
-    cout << "distinct C" << endl; 
+    //cout << "distinct C" << endl; 
     BitInputStream compressB(compress);   
+
+    cout << "Reading header from file " << (argv[1]) << endl; 
     int distinctC = 0;
     for(int i = 0; i < 32; i++)
     {
         //cout << "reading distinctC" << endl;
         int bit = compressB.readBit();
-        distinctC += bit << (31-i);
+        distinctC |= bit << (31-i);
     }
  
-    int count = 0;
+    unsigned int count = 0;
 
-        cout << distinctC << " is distinct C" <<endl;
+    cout << "There are " << distinctC << " distinct characters" << endl;
     for(int i = 0; i < distinctC; i++)
     {
         //cout << "reading freq/sym" << endl;
-        int frequency, symbol = 0;
+        int frequency = 0; 
+        int symbol = 0;
+        int bit = 0;
         for(int j = 0; j < 32; j++)
         {
-            frequency += compressB.readBit() << (31-j);
+            bit = compressB.readBit();
+            frequency |= bit << (31-j);
+            bitset<8> frequencyB(frequency);
+            //cout << bit << "is bit" <<endl;
         }
         
         for(int j = 0; j < 8; j++)
         {
-            symbol += compressB.readBit() << (7-j);
+            symbol |= compressB.readBit() << (7-j);
         }
-        cout << frequency << " is frequency of " << symbol << endl;
+        //cout << frequency << " is frequency of " << symbol << endl;
         freq[symbol] = frequency;
         count += frequency;
 
     }
+    cout << " ... and size " << count << " bytes" << endl; 
  
+
+    cout << "Building huffman tree..." << endl;
     HCTree ht;
     ht.build(freq);
     
@@ -109,22 +121,21 @@ int main(int argc, char* argv[])
     
     BitOutputStream originalB(original);
 
+    cout << "Decoding file to " << (argv[2]) << endl;
+
     for( ; 0 < count; count--)
     {
-        cout << " in for to decode" << endl;
         unsigned char symbol = ht.decode(compressB);
-        if(compress.eof()){ break;}
-        cout << symbol << " written to the file" << endl;
+        //if(compress.eof()){ break;}
+ //      cout << symbol << " written to the file" << endl;
         //original << symbol;
         for(int i = 0; i < 8; i++)
-        {    originalB.writeBit(symbol >> (7-i));}
+        {    
+            originalB.writeBit(symbol >> (7-i));
+        }
     }
 
     compress.close();
     original.close();   
-///read int, that the number of distinct C
-//read and store nodes until0
-//build tree
-//
 }
 

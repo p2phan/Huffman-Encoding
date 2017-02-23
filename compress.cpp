@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
             count += bit << (7-i);
         }
 
-        cout << "read " << count << " from file" <<endl; 
+ //       cout << "read " << count << " from file" <<endl; 
         //count = original.get();
 
         if(original.eof()){break;}
@@ -119,39 +119,31 @@ int main(int argc, char* argv[])
     
     }
     
-    cout << "done" << endl;
     int bits = 0;
     for(int i = 0; i < freq.size(); i++)
     {
         //cout << "before for" << endl;
         if(0 < freq[i]) { 
             int frequency = freq[i];
-            cout << "freq is "<< frequency << endl;
+  //          cout << "freq is "<< frequency << endl;
             for(int j = 0; j < 32; j++)
             {
                 bitH++;
                 compressB.writeBit(frequency >> (31-j));
             }
-            cout << "symbol is " << i << endl;
+    //        cout << "symbol is " << i << endl;
             for(int j = 0; j < 8; j++)
             {
                 bitH++;
                 compressB.writeBit(i >> (7-j));
             }
-            /*if(distinctC == ht.getDistinctC()-1) {
-                compressB.writeBit(0);
-            }
-            else {
-                compressB.writeBit(1);
-            }*/
         }  
         //cout <<"after for" << endl;
     }
-    cout << bitH << " bits in header"<< endl;
     original.clear();
     original.seekg(0, ios::beg);
 
-    int bitE;
+    //int bitE = 0;
     cout << "Encoding data" << endl;
     while(1)
     {
@@ -163,12 +155,54 @@ int main(int argc, char* argv[])
         }
         //symbol = original.get();
         if(original.eof()){break;}
-        cout <<  " encoding " << symbol <<endl;;
+//        cout <<  " encoding " << symbol <<endl;;
         ht.encode(symbol, compressB);
-        bitE++;
+        //bitE++;
     }
     compressB.flush();
-    cout<< bitE << " endcoded" << endl;   
+    //:w
+    //cout<< bitE << " endcoded" << endl;   
     original.close();
     compress.close();     
+
+/*     ifstream compress;
+    compress.open(argv[1]);
+
+    if(!compress.is_open()){
+        cout << "Failed to open " << argv[1] << endl;
+        return -1;
+    }
+    
+    BitInputStream compressB(compress);
+
+    ofstream originalBIT;
+    originalBIT.open(argv[2]);
+
+    BitOutputStream originalB(originalBIT);
+    
+while(1){
+        int symbol = 0;
+        for(int i = 0; i < 8; i++)
+        {
+            int bit = compressB.readBit();
+            //cout << bit << endl;
+            symbol |= (bit << (7-i));
+                 
+        }
+            //cout << "read" << symbol  <<endl;
+
+        if(compress.eof()){
+        break;
+        }
+        
+        for(int i = 0; i< 8; i++){
+            //cout <<( (symbol >>(7-i))&1) << endl;
+            originalB.writeBit(symbol >> (7-i));
+
+
+        }
+            //cout << "write" << endl;
+    }
+    originalB.flush();
+*/
 }
