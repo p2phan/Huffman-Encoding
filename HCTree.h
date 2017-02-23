@@ -1,3 +1,8 @@
+/**
+ *  CSE100 PA3: Huffman Compress/Decompress and Code Refactoring
+ *  Authors CS100 tutors, Christine Alvarado
+ *  Edited by Peter Phan A13042904 cs100wdh
+ */
 #ifndef HCTREE_H
 #define HCTREE_H
 

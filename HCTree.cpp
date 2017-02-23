@@ -71,19 +71,31 @@ void HCTree::build(const vector<int>& freqs)
 
 } 
 
+/**
+ * Encodes a byte and writes it's code out to file
+ *
+ * Parameters:
+ *            symbol: the byte to encode using 
+ *            huffman tree
+ *
+ *            out: the BitOutPut stream to write the result 
+ *            of the coded symbol
+ */
 void HCTree::encode(byte symbol, BitOutputStream& out) const
 {
     HCNode* curr = leaves.at(symbol);
 
+    //null check
     if(!curr) { return;}
 
-    //repetitive?
+    //when there is only one char in a file
     if(!curr->p && !curr->c0 && !curr->c1)
     {
          out.writeBit(0);
     }
 
 
+    //while loop to get the encoding
     int count = 0;
     int code = 0;
     while(curr->p)
@@ -97,6 +109,7 @@ void HCTree::encode(byte symbol, BitOutputStream& out) const
         curr = curr->p;
     }
 
+    //for loop writes out the bits of the encoding left to right
     for(int i = count-1; 0 <= i; i--)
     {
         int bit = (code >> i) & 1;
@@ -172,30 +185,37 @@ void HCTree::encode(byte symbol, ofstream& out) const
 
 }
 
-
+/**
+ * Decodes from the BitInputStream and returns the result
+ *
+ * Parameter:
+ *           in: the BitInputStream to read from and decode
+ */
 int HCTree::decode(BitInputStream& in) const
 {
 
     HCNode* curr = root;
-    
+ 
+    //null check   
     if(!curr){return 0;}
 
+    //traces down the tree for the symbol and returns it
     while(curr->c0 || curr->c1)
     {
         int bit = in.readBit();
         
         if(bit == 1)
         {
-         //   cout << "1" << endl;
             curr = curr->c1;
         }
 
         else
         {
-           // cout << "0" << endl; 
             curr =  curr->c0;
         }
     }
+
+
     return (int)curr->symbol;
 
 }

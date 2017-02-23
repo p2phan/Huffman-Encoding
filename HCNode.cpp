@@ -2,7 +2,7 @@
 
 /**
  * Filename: HCNode.cpp
- * Author: Peter Phan A13042904 cs100wdh
+ * Edited by Peter Phan A13042904 cs100wdh
  *
  * Purpose: This class will be used as nodes for a Huffman tree
  */

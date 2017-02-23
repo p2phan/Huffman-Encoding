@@ -3,7 +3,7 @@
  * Author: Peter Phan cs100wdh A13042904
  *
  * Purpose: Designed to read a file one bit at a time
- *
+ * by using istream and a buffer
  */
 
 #include "BitInputStream.h"
@@ -19,17 +19,11 @@ void BitInputStream::fill()
 {
     //resets buffer
     buff = in.get();
- //   std::bitset<8> buffB(buff);
-   // std::cout << buffB << " is read"<< std::endl;
     nbits = 0;
-   //std::cout << "cut" << std::endl;    
 }
 
 /**
  * Returns the next bit from a file
- *
- *
- *
  */
 
 int BitInputStream::readBit()
@@ -42,7 +36,6 @@ int BitInputStream::readBit()
 
     //updates nbits and return current bit
     int bit = (buff >> (7 - nbits)) & 1;    
-   // std::cout << ((buff >> (7 - nbits)) & 1) << " with "<< nbits << std::endl;    
     nbits ++;
     return bit;    
 

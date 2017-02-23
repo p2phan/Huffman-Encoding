@@ -1,3 +1,8 @@
+/**
+ *  CSE 100 PA3 3: Huffman Compress/Decompress and Code Refactoring
+ *  Author: Peter Phan A13042904 cs100wdh
+ *
+ */
 #ifndef BITOUTPUTSTREAM_H
 #define BITOUTPUTSTREAM_H
 
@@ -5,7 +10,7 @@
 
 /**
  * A class that allows users to "write a bit" at a time
- *
+ * by using ostream and then buffering a bit at a time
  */
 
 class BitOutputStream{
